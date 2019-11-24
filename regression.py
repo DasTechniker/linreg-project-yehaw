@@ -54,32 +54,25 @@ def linear_regression(x, y, logger=None):
     w: a 1D array
        linear regression parameters
     """
-    w = np.random.rand(len(x[0]))
-    # for fill in range(len(x[0])):
-    #     w.append(1)
-    w_old = w
-    alpha = .0001
-    for counter in range(100):
-        logger.log(counter, w[0])
-        print(str(w))
+    #w = np.random.rand(len(x[0]))
+    w = [0]*len(x[1])
+    alpha = .001
+    counterer = 0
+    for counter in range(25):
+        counterer+=1
         for i in range(len(x)):
-                sum = 0
-                for vvvvvv in range(len(x[i])):
-                    yeet = x[i][vvvvvv]
-                    meet = w[vvvvvv]
-                    sum = sum+ (x[i][vvvvvv]*w[vvvvvv])
-                for j in range(len(w)):
-                    yeet = w[j]
-                    meet = y[i]
-                    beet = sum-y[i]
-                    print(beet)
-                    greet = (sum-y[i])*(sum-y[i])
-                    fleet = .5*greet
-                    bleet = alpha*fleet
-                    ifrit = w[j] - bleet
-                    w[j] = w[j] - alpha*(.5*((sum-y[i])*(sum-y[i])))
-
-        w_old = w
+                counterer+=1
+                yHat = np.dot(x[i], w)
+                yReal = y[i]
+                deltaY = yHat - y[i]
+                loss = deltaY**2
+                #logger.log(counterer,loss)
+                wackySac = x[i]
+                for j in range(len(x[i])):
+                    wackySac[j]=wackySac[j]*loss*alpha*(1/len(y))
+                #lossFrac = (1 / len(y)) * wackySac * alpha
+                #lossAlpha = alpha * lossFrac
+                w = w - wackySac
     print("All done!")
     return w
 
