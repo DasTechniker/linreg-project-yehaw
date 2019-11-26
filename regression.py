@@ -58,40 +58,14 @@ def linear_regression(x, y, logger=None):
     w = np.asarray([0]*len(x[1]))
     x = np.asarray(x)
     y = np.asarray(y)
-    #loggerHold = []
     alpha = .001
     counterer = 0
     m = len(x[0])
-    # for counter in range(math.ceil(5000/len(x))):
-    #     counterer+=1
-    #     for i in range(len(x)):
-    #             counterer+=1
-    #             yHat = np.dot(x[i], w)
-    #             yReal = y[i]
-    #             deltaY = yHat - y[i]
-    #             loss = deltaY**2
-    #             #logger.log(counterer,loss)
-    #             #loggerHold.append(loss)
-    #             wackySac = [loss*alpha*(1/len(y))]*len(x[i])
-    #             # for j in range(len(x[i])):
-    #             #     wackySac[j]=wackySac[j]*loss*alpha*(1/len(y))
-    #             #lossFrac = (1 / len(y)) * wackySac * alpha
-    #             #lossAlpha = alpha * lossFrac
-    #             w = np.add(w, wackySac)
-    # # for i in range(len(loggerHold)):
-    # #     logger.log(i,loggerHold[i])
-    for counter in range(250):
+    for counter in range(1000):
         counterer+=1
         loss = np.dot(x, w)-y
-        logger.log(counterer, loss)
-        w = w - alpha * (1.0/m) * np.dot(x.T, np.dot(x, w)-y)
-        # lossSum = 0
-        # for i in range(m):
-        #     loss = (np.dot(x[i],w)-y[i])**2
-        #     lossSum+=loss
-        # lossSum = lossSum*alpha*(1/m)
-        # for j in range(len(w)):
-        #     w[j] = w[j] + lossSum
+        logger.log(counterer, abs(np.sum(loss)))
+        w = w - (alpha/m) * np.dot(x.T, loss)
     print("All done!")
     return w
 
@@ -123,26 +97,20 @@ def logistic_regression(x, y, logger=None):
     w: a 1D array
        logistic regression parameters
     """
-    w = [0] * len(x[1])
-    # loggerHold = []
-    alpha = .001
+    w = np.asarray([0] * len(x[1]))
+    x = np.asarray(x)
+    y = np.asarray(y)
+    alpha = .0001
     counterer = 0
-    for counter in range(math.ceil(5000 / len(x))):
+    m = len(x[0])
+    for counter in range(1000):
         counterer += 1
-        for i in range(len(x)):
-            counterer += 1
-            yHat = np.dot(x[i], w)
-            yReal = y[i]
-            deltaY = yHat - y[i]
-            loss = deltaY ** 2
-            # logger.log(counterer,loss)
-            # loggerHold.append(loss)
-            wackySac = np.multiply(x[i], [loss * alpha * (1 / len(y))] * len(x[i]))
-            # for j in range(len(x[i])):
-            #     wackySac[j]=wackySac[j]*loss*alpha*(1/len(y))*
-            # lossFrac = (1 / len(y)) * wackySac * alpha
-            # lossAlpha = alpha * lossFrac
-            w = np.add(w, wackySac)
+        preds = np.dot(x,-w)
+        loss = []
+        for i in range(len(preds)):
+            loss.append((1/(1+math.exp(preds[i]))) - y[i])
+        logger.log(counterer, abs(np.sum(loss)))
+        w = w - alpha * np.dot(x.T, np.dot(x, w) - y)
     return w
 
 def linear_regression_sgd(x, y, logger=None):
@@ -168,7 +136,16 @@ def linear_regression_sgd(x, y, logger=None):
     w: a 1D array
        linear regression parameters
     """
-    w = None
+    w = np.asarray([0] * len(x[1]))
+    x = np.asarray(x)
+    y = np.asarray(y)
+    alpha = .0001
+    m = len(x[0])
+    for counter in range(1000):
+        k = np.random.randint(1, len(x))
+        loss = np.dot(x[k], w) - y[k]
+        logger.log(counter, abs(np.sum(loss)))
+        w = w - alpha * np.dot(x.T, np.dot(x, w) - y)
     return w
 
 
@@ -199,7 +176,17 @@ def logistic_regression_sgd(x, y, logger=None):
     w: a 1D array
        logistic regression parameters
     """
-    w = None
+    w = np.asarray([0] * len(x[1]))
+    x = np.asarray(x)
+    y = np.asarray(y)
+    alpha = .0001
+    m = len(x[0])
+    for counter in range(1000):
+        k = np.random.randint(1,len(x))
+        preds = np.dot(x[k], -w)
+        loss = ((1/(1+math.exp(preds))))-y[k]
+        logger.log(counter, abs(np.sum(loss)))
+        w = w - alpha * np.dot(x.T, np.dot(x, w) - y)
     return w
 
 
