@@ -54,19 +54,20 @@ def linear_regression(x, y, logger=None):
     w: a 1D array
        linear regression parameters
     """
-    #w = np.random.rand(len(x[0]))
+    #Initialise arrays to numpy's arrays so everything is nice
     w = np.asarray([0]*len(x[1]))
     x = np.asarray(x)
     y = np.asarray(y)
+
+    #Set alpha to .001, as we're using 1/m instead of 1/2.
     alpha = .001
-    counterer = 0
-    m = len(x[0])
+    #Iterate 1000 times. It works nicely, and doesn't take too long.
     for counter in range(1000):
-        counterer+=1
+        #Calculate loss, log loss
         loss = np.dot(x, w)-y
-        logger.log(counterer, abs(np.sum(loss)))
-        w = w - (alpha/m) * np.dot(x.T, loss)
-    print("All done!")
+        logger.log(counter, abs(np.sum(loss)))
+        #Update weights using a slightly compressed formula
+        w = w - (alpha/len(x[0])) * np.dot(x.T, loss)
     return w
 
 
@@ -97,20 +98,25 @@ def logistic_regression(x, y, logger=None):
     w: a 1D array
        logistic regression parameters
     """
+    # Initialise arrays to numpy's arrays so everything is nice
     w = np.asarray([0] * len(x[1]))
     x = np.asarray(x)
     y = np.asarray(y)
+
+    # Set alpha to .0001
     alpha = .0001
-    counterer = 0
-    m = len(x[0])
+    # Iterate 1000 times. It works nicely, and doesn't take too long.
     for counter in range(1000):
-        counterer += 1
+        #Initialise predictions for sigmoid function
         preds = np.dot(x,-w)
+        #Calculate values for sigmoid function
         loss = []
         for i in range(len(preds)):
             loss.append((1/(1+math.exp(preds[i]))) - y[i])
-        logger.log(counterer, abs(np.sum(loss)))
-        w = w - alpha * np.dot(x.T, np.dot(x, w) - y)
+        #Log loss
+        logger.log(counter, abs(np.sum(loss)))
+        #Update weights per formula
+        w = w - alpha * np.dot(x.T, loss)
     return w
 
 def linear_regression_sgd(x, y, logger=None):
@@ -136,11 +142,13 @@ def linear_regression_sgd(x, y, logger=None):
     w: a 1D array
        linear regression parameters
     """
+    # Initialise arrays to numpy's arrays so everything is nice
     w = np.asarray([0] * len(x[1]))
     x = np.asarray(x)
     y = np.asarray(y)
+    # Set alpha to .0001
     alpha = .0001
-    m = len(x[0])
+    # Iterate 1000 times. It works nicely, and doesn't take too long.
     for counter in range(1000):
         k = np.random.randint(1, len(x))
         loss = np.dot(x[k], w) - y[k]
@@ -176,17 +184,23 @@ def logistic_regression_sgd(x, y, logger=None):
     w: a 1D array
        logistic regression parameters
     """
+    # Initialise arrays to numpy's arrays so everything is nice
     w = np.asarray([0] * len(x[1]))
     x = np.asarray(x)
     y = np.asarray(y)
+    # Set alpha to .0001
     alpha = .0001
-    m = len(x[0])
+    # Iterate 1000 times. It works nicely, and doesn't take too long.
     for counter in range(1000):
+        #Pick a random x to learn
         k = np.random.randint(1,len(x))
+        #Calculate values for sigmoid function
         preds = np.dot(x[k], -w)
         loss = ((1/(1+math.exp(preds))))-y[k]
+        #Log loss
         logger.log(counter, abs(np.sum(loss)))
-        w = w - alpha * np.dot(x.T, np.dot(x, w) - y)
+        #Update weights as per formula
+        w = w - alpha * np.multiply(x[k], [loss]*len(x[k]))
     return w
 
 
